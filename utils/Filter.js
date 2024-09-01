@@ -12,7 +12,6 @@ export function loadFilters(animalTypes) {
       const breedItem = createBreedTypeItem(breed.id, breed.name, animal.type);
       breedsContainer.appendChild(breedItem);
     });
-    typeItem.appendChild(breedsContainer);
   });
   // Add event listeners for type checkboxes
   document.querySelectorAll(".type-checkbox").forEach((typeCheckbox) => {
@@ -30,10 +29,14 @@ function createFilterTypeItem(type) {
   const clone = template.content.firstElementChild.cloneNode(true);
   const input = clone.querySelector("input");
   input.value = type;
-  input.id = type;
   const label = clone.querySelector("label");
-  label.for = type;
-  label.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+  label.innerHTML += type.charAt(0).toUpperCase() + type.slice(1);
+  const accordionButton = clone.querySelector(".accordion-button");
+  console.log(accordionButton.dataset);
+  accordionButton.dataset.bsToggle = "collapse";
+  accordionButton.dataset.bsTarget = `#collapse${type}`;
+  const accordionCollapse = clone.querySelector(".accordion-collapse");
+  accordionCollapse.id = `collapse${type}`;
   return clone;
 }
 
@@ -41,22 +44,21 @@ function createFilterTypeItem(type) {
 function createBreedTypeItem(id, name, type) {
   const template = document.getElementById("filterBreedItemTemplate");
   const clone = template.content.firstElementChild.cloneNode(true);
-
   const input = clone.querySelector("input");
   input.dataset.type = type;
   input.value = id;
-  input.id = type + id;
-
   const label = clone.querySelector("label");
-  label.for = type + id;
-  label.textContent = name;
+  label.innerHTML += name;
   return clone;
 }
 
 // Handle changes to type checkboxes
 function handleTypeCheckboxChange(event) {
   const typebox = event.target;
-  const breedboxes = typebox.parentNode.querySelectorAll(`.breed-checkbox`);
+  const type = typebox.value;
+  const breedboxes = document.querySelectorAll(
+    `#filters .breed-checkbox[data-type="${type}"]`
+  );
   // Check or uncheck all breed checkboxes based on type checkbox state
   breedboxes.forEach((checkbox) => (checkbox.checked = typebox.checked));
   // Update appearance of type checkbox
