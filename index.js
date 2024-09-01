@@ -1,4 +1,5 @@
 import * as Gallery from "./utils/Gallery.js";
+import * as Filter from "./utils/Filter.js";
 import * as CatAPI from "./utils/CatAPI.js";
 import * as DogAPI from "./utils/DogAPI.js";
 
@@ -16,6 +17,8 @@ window.addEventListener("scroll", lazyLoad);
   Gallery.clear();
   // Load images to gallery
   loadImagesToGallery();
+  // Load Filters
+  Filter.loadFilters();
 })();
 
 // Load images to gallery
