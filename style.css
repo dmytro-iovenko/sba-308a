@@ -36,11 +36,33 @@ main {
 .gallery {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
 }
 
-.gallery div {
+.card {
+  margin: 0 0.5em;
+  box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.18);
+  border: none;
+}
+
+.card .img-wrapper {
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card img {
+  /* max-height: 100%; */
+  /* height: calc(70vw); */
+  /* object-fit: cover; */
+  width: 100%;
+  height: min-content;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+/* .gallery div {
   width: calc(25% - 10px);
 }
 
@@ -54,4 +76,4 @@ main {
 
 .gallery img:hover {
   transform: scale(1.05);
-}
+} */
