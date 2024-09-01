@@ -1,15 +1,9 @@
 // The gallery element.
 const gallery = document.querySelector(".gallery");
 
-export function createGalleryItem(imgSrc, imgAlt, imgId) {
+export function createGalleryItem() {
   const template = document.querySelector("#galleryItemTemplate");
-  const clone = template.content.firstElementChild.cloneNode(true);
-
-  const img = clone.querySelector("img");
-  img.src = imgSrc;
-  img.alt = imgAlt;
-
-  return clone;
+  return template.content.firstElementChild.cloneNode(true);
 }
 
 export function clear() {
@@ -20,4 +14,13 @@ export function clear() {
 
 export function appendGallery(element) {
   gallery.appendChild(element);
+}
+
+export async function loadImage(url, elem) {
+  const img = elem.querySelector("img");
+  return new Promise((resolve, reject) => {
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = url;
+  });
 }

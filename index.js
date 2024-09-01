@@ -25,12 +25,17 @@ async function loadImagesToGallery() {
     console.log(catImages, dogImages);
     // Combine and shuffle all images using spread operator
     const images = shuffleImages([...catImages, ...dogImages]);
+    const loadImages = [];
     // For each image in the response array, create a new element and append it to the carousel
-    images.forEach((image) => {
+    images.forEach(async (image) => {
       // Create gallery item using HTML template
       const galleryItem = Gallery.createGalleryItem(image.url, "...", image.id);
       // Append each of these new elements to the gallery
       Gallery.appendGallery(galleryItem);
+      // Wait until image loads and completely renders
+      await Gallery.loadImage(image.url, galleryItem);
+      // Apply Masonry script to updated gallery
+      new Masonry(".gallery", { percentPosition: true });
     });
   } catch (error) {
     console.log("ERROR:", error);
