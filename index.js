@@ -1,4 +1,5 @@
 import * as Gallery from "./utils/Gallery.js";
+import * as CatAPI from "./utils/CatAPI.js";
 
 const images = [
   { src: "https://via.placeholder.com/150", alt: "Image 1" },
@@ -26,16 +27,24 @@ const images = [
 (function initialLoad() {
   // Clear galery before populate new items
   Gallery.clear();
+  // Load images to gallery
+  loadImagesToGallery();
+})();
+
+// Load images to gallery
+async function loadImagesToGallery() {
+  // Get images Cat API
+  const catData = await CatAPI.getImages();
+  console.log(catData)
+  // Parse the JSON response from the info data into info object
+  const catImages = await catData.data;
+  console.log(catImages)
 
   // For each image in the response array, create a new element and append it to the carousel
-  images.forEach((image) => {
+  catImages.forEach((image) => {
     // Create gallery item using HTML template
-    const galleryItem = Gallery.createGalleryItem(
-      image.src,
-      "...",
-      image.id
-    );
+    const galleryItem = Gallery.createGalleryItem(image.url, "...", image.id);
     // Append each of these new elements to the gallery
     Gallery.appendGallery(galleryItem);
   });
-})();
+}
