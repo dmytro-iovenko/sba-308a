@@ -1,32 +1,12 @@
-const dogBreeds = [
-  { id: 1, name: "Affenpinscher", breed_group: "Toy" },
-  { id: 2, name: "Afghan Hound", breed_group: "Hound" },
-  { id: 3, name: "African Hunting Dog" },
-  { id: 4, name: "Airedale Terrier", breed_group: "Terrier" },
-];
-
-const catBreeds = [
-  { id: "abys", name: "Abyssinian" },
-  { id: "aege", name: "Aegean" },
-  { id: "abob", name: "American Bobtail" },
-  { id: "acur", name: "American Curl" },
-];
-
-export function loadFilters() {
+// Load filters
+export function loadFilters(animalTypes) {
   // The filters element
   const filters = document.getElementById("filters");
-
-  const animalTypes = [
-    { type: "dogs", breeds: dogBreeds },
-    { type: "cats", breeds: catBreeds },
-  ];
-
   // Create and append filter items for each animal type
   animalTypes.forEach((animal) => {
     const typeItem = createFilterTypeItem(animal.type);
     filters.appendChild(typeItem);
     const breedsContainer = typeItem.querySelector("#breeds");
-
     // Create and append filter items for each breed
     animal.breeds.forEach((breed) => {
       const breedItem = createBreedTypeItem(breed.id, breed.name, animal.type);
@@ -34,12 +14,10 @@ export function loadFilters() {
     });
     typeItem.appendChild(breedsContainer);
   });
-
   // Add event listeners for type checkboxes
   document.querySelectorAll(".type-checkbox").forEach((typeCheckbox) => {
     typeCheckbox.addEventListener("change", handleTypeCheckboxChange);
   });
-
   // Add event listeners for breed checkboxes
   document.querySelectorAll(".breed-checkbox").forEach((breedCheckbox) => {
     breedCheckbox.addEventListener("change", handleBreedCheckboxChange);

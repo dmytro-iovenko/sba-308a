@@ -18,8 +18,32 @@ window.addEventListener("scroll", lazyLoad);
   // Load images to gallery
   loadImagesToGallery();
   // Load Filters
-  Filter.loadFilters();
+  loadFilters();
 })();
+
+// Load filters
+async function loadFilters() {
+  try {
+    // Fetch breeds from Cat API and Dog API
+    const catFetch = await CatAPI.getBreeds();
+    const dogFetch = await DogAPI.getBreeds();
+    console.log(catFetch, dogFetch);
+    // Get breeds data simultaneously
+    const [catData, dogData] = await Promise.all([catFetch, dogFetch]);
+    console.log(catData, dogData);
+    // Parse JSON responses from fetched data into objects arrays
+    const catBreeds = await catData.data;
+    const dogBreeds = await dogData.data;
+    console.log(catBreeds, dogBreeds);
+    // Load Filters
+    Filter.loadFilters([
+      { type: "cats", breeds: catBreeds },
+      { type: "dogs", breeds: dogBreeds },
+    ]);
+  } catch (error) {
+    console.log("ERROR:", error);
+  }
+}
 
 // Load images to gallery
 async function loadImagesToGallery(page = 0, limit = 10, order = "DESC") {
