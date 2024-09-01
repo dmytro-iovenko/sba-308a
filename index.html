@@ -1,38 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cats&Dogs Image Gallery</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Our Scripts -->
+    <script type="module" src="index.js" defer></script>
+  </head>
+  <body>
     <header>
-        <h1>Cats&Dogs Image Gallery</h1>
+      <h1>Cats&Dogs Image Gallery</h1>
     </header>
     <main>
-        <div class="gallery">
-            <img src="https://via.placeholder.com/150" alt="Image 1">
-            <img src="https://via.placeholder.com/150" alt="Image 2">
-            <img src="https://via.placeholder.com/150" alt="Image 3">
-            <img src="https://via.placeholder.com/150" alt="Image 4">
-            <img src="https://via.placeholder.com/150" alt="Image 5">
-            <img src="https://via.placeholder.com/150" alt="Image 6">
-            <img src="https://via.placeholder.com/150" alt="Image 7">
-            <img src="https://via.placeholder.com/150" alt="Image 8">
-            <img src="https://via.placeholder.com/150" alt="Image 9">
-            <img src="https://via.placeholder.com/150" alt="Image 10">
-            <img src="https://via.placeholder.com/150" alt="Image 11">
-            <img src="https://via.placeholder.com/150" alt="Image 12">
-            <img src="https://via.placeholder.com/150" alt="Image 13">
-            <img src="https://via.placeholder.com/150" alt="Image 14">
-            <img src="https://via.placeholder.com/150" alt="Image 15">
-            <img src="https://via.placeholder.com/150" alt="Image 16">
-            <img src="https://via.placeholder.com/150" alt="Image 17">
-            <img src="https://via.placeholder.com/150" alt="Image 18">
-            <img src="https://via.placeholder.com/150" alt="Image 19">
-            <img src="https://via.placeholder.com/150" alt="Image 20">
-        </div>
+      <div class="gallery"></div>
     </main>
-</body>
+    <!-- Gallery Item Template -->
+    <template id="galleryItemTemplate">
+      <div><img src="https://via.placeholder.com/150" alt="..." /></div>
+    </template>
+    <script type="text/javascript" src="index.js" type="module"></script>
+  </body>
 </html>
