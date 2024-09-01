@@ -77,3 +77,8 @@ main {
 .gallery img:hover {
   transform: scale(1.05);
 } */
+
+.accordion-collapse {
+    max-height: 50vh;
+    overflow-y: scroll;
+}
