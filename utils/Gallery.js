@@ -2,6 +2,8 @@ import { main, favourite } from "../index.js";
 
 // Create gallery element.
 const gallery = createGallery();
+// Create favourited gallery element.
+const favouritedGallery = createGallery();
 
 function createGallery() {
   const template = document.querySelector("#galleryTemplate");
@@ -9,9 +11,11 @@ function createGallery() {
   return clone;
 }
 
-export function displayGallery() {
-  main.appendChild(gallery);
-  clear();
+export function displayGallery(isFavourited = false) {
+  const element = isFavourited ? favouritedGallery : gallery;
+  main.appendChild(element);
+  // Clear gallery content
+  clear(isFavourited);
 }
 
 export function createGalleryItem(imgId, imgType) {
@@ -26,14 +30,16 @@ export function createGalleryItem(imgId, imgType) {
   return clone;
 }
 
-export function clear() {
-  while (gallery.firstChild) {
-    gallery.removeChild(gallery.firstChild);
+export function clear(isFavourited = false) {
+  const element = isFavourited ? favouritedGallery : gallery;
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
   }
 }
 
-export function appendGallery(element) {
-  gallery.appendChild(element);
+export function appendGallery(item, isFavourited = false) {
+  const element = isFavourited ? favouritedGallery : gallery;
+  element.appendChild(item);
 }
 
 export async function loadImage(url, elem) {
@@ -45,11 +51,11 @@ export async function loadImage(url, elem) {
   });
 }
 
-export async function renderImage(id, type, url) {
+export async function renderImage(id, type, url, isFavourited = false) {
   // Create gallery item using HTML template
   const galleryItem = createGalleryItem(id, type);
   // Append each of these new elements to the gallery
-  appendGallery(galleryItem);
+  appendGallery(galleryItem, isFavourited);
   // Wait until image loads and completely renders
   await loadImage(url, galleryItem);
   // Apply Masonry script to updated gallery

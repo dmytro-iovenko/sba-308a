@@ -6,6 +6,9 @@ import * as DogAPI from "./utils/DogAPI.js";
 // Flag to check if a lazy load request is already running
 let isLazyLoad = false;
 
+// Flag to check if Favourites displayed
+let isFavourites = false;
+
 // Create galery params to use them in fetch
 let params = {};
 
@@ -37,6 +40,7 @@ window.addEventListener("DOMContentLoaded", () => routeUrl());
 
 function routeUrl(url = window.location) {
   console.log(url);
+  // Display routed content
   switch (url.hash) {
     case "#favourites":
       favouritesLoad();
@@ -53,6 +57,8 @@ function routeUrl(url = window.location) {
 function initialLoad() {
   // Clear content
   clear();
+  // Reset isFavourites
+  isFavourites = false;
   // Display filter
   Filter.displayFilter();
   // Display gallery
@@ -75,10 +81,12 @@ function initialLoad() {
 function favouritesLoad() {
   // Clear content
   clear();
+  // Enable isFavourites
+  isFavourites = true;
   // Disable Lazy Load
   params.isNextPage = false;
   // Display gallery
-  Gallery.displayGallery();
+  Gallery.displayGallery(isFavourites);
   // Load favourited images to gallery
   loadFavouritedImagesToGallery();
 }
@@ -179,6 +187,8 @@ export async function favourite(imgId, imgType) {
           ? await CatAPI.deleteFavourite(favouriteId)
           : await DogAPI.deleteFavourite(favouriteId);
       console.log("favourite() DELETE response:", response);
+      // If isFavourites - reload gallery
+      isFavourites && favouritesLoad();
     } else {
       const response =
         imgType === "cats"
@@ -224,11 +234,17 @@ async function loadFavouritedImagesToGallery() {
     // Parse JSON responses from fetched data into objects arrays
     const catImages = await catData.data.map((i) => ({ ...i, type: "cats" }));
     const dogImages = await dogData.data.map((i) => ({ ...i, type: "dogs" }));
-    console.log("loadFavouritedImagesToGallery() images:", catImages, dogImages);
+    console.log(
+      "loadFavouritedImagesToGallery() images:",
+      catImages,
+      dogImages
+    );
     // Combine and shuffle all images using spread operator
     const images = shuffleImages([...catImages, ...dogImages]);
     // For each image in the response array, create a new element and append it to the carousel
-    images.forEach((i) => Gallery.renderImage(i.image_id, i.type, i.image.url));
+    images.forEach((i) =>
+      Gallery.renderImage(i.image_id, i.type, i.image.url, true)
+    );
   } catch (error) {
     console.log("loadFavouritedImagesToGallery() ERROR:", error);
   }
