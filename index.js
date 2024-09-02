@@ -131,18 +131,18 @@ function lazyLoad() {
 export async function favourite(imgId, imgType) {
   console.log("favourite():", imgId, imgType);
   try {
-    const favouriteId = await getFavoriteId(imgId);
+    const favouriteId = await getFavouriteId(imgId);
     if (favouriteId) {
       const response =
         imgType === "cats"
-          ? await CatAPI.deleteFavorite(favouriteId)
-          : await DogAPI.deleteFavorite(favouriteId);
+          ? await CatAPI.deleteFavourite(favouriteId)
+          : await DogAPI.deleteFavourite(favouriteId);
       console.log("favourite() DELETE response:", response);
     } else {
       const response =
         imgType === "cats"
-          ? await CatAPI.addFavorite(imgId)
-          : await DogAPI.addFavorite(imgId);
+          ? await CatAPI.addFavourite(imgId)
+          : await DogAPI.addFavourite(imgId);
       console.log("favourite() POST response:", response);
       const data = await response.data;
       console.log("favourite() POST data:", data);
@@ -151,22 +151,22 @@ export async function favourite(imgId, imgType) {
     console.log("favourite() ERROR:", error);
   }
 
-  async function getFavoriteId(imgId, imgType) {
+  async function getFavouriteId(imgId, imgType) {
     try {
       const response =
         imgType === "cats"
-          ? await CatAPI.getFavorites()
-          : await DogAPI.getFavorites();
-      console.log("getFavoriteId() response:", response);
+          ? await CatAPI.getFavourites()
+          : await DogAPI.getFavourites();
+      console.log("getFavouriteId() response:", response);
       const data = await response.data;
       console.log("favourite() POST data:", data);
       const favouriteId = data
         .filter((item) => item.image_id === imgId)
         .reduce((id, item) => item.id, null);
-      console.log("getFavoriteId() return:", favouriteId);
+      console.log("getFavouriteId() return:", favouriteId);
       return favouriteId;
     } catch (error) {
-      console.log("getFavoriteId() ERROR:", error);
+      console.log("getFavouriteId() ERROR:", error);
     }
   }
 }
