@@ -57,7 +57,7 @@
     <main></main>
     <!-- Gallery Template -->
     <template id="galleryTemplate">
-        <div class="gallery row gx-0"></div>
+      <div class="gallery row gx-0"></div>
     </template>
     <!-- Gallery Item Template -->
     <template id="galleryItemTemplate">
@@ -70,9 +70,15 @@
               alt="..."
             />
             <div data-img-id="" class="favourite-button">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+                fill="currentColor"
+              >
                 <!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
-                <path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z" />
+                <path
+                  d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
+                />
               </svg>
             </div>
           </div>
@@ -105,22 +111,41 @@
     <!-- Filter Button Template -->
     <template id="filterButtonTemplate">
       <div class="d-grid gap-2 d-flex justify-content-end p-2 sticky-top">
-        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterImages" aria-controls="filterImages">
+        <button
+          class="btn btn-primary"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#filterImages"
+          aria-controls="filterImages"
+        >
           Filter Images
         </button>
       </div>
     </template>
     <!-- Filter Template -->
     <template id="filterTemplate">
-      <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="filterImages" aria-labelledby="filterImagesLabel">
+      <div
+        class="offcanvas offcanvas-end"
+        data-bs-scroll="true"
+        tabindex="-1"
+        id="filterImages"
+        aria-labelledby="filterImagesLabel"
+      >
         <div class="offcanvas-header">
           <h5 class="offcanvas-title" id="filterImagesLabel">Filter Images</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="offcanvas-body">
           <form id="filterForm">
             <div class="d-flex gap-1">
-              <button id="apply" class="btn btn-primary flex-fill">Apply Filter</button>
+              <button id="apply" class="btn btn-primary flex-fill">
+                Apply Filter
+              </button>
               <button id="reset" class="btn btn-secondary">Reset</button>
             </div>
             <div id="filters" class="form-group accordion"></div>
@@ -128,5 +153,23 @@
         </div>
       </div>
     </template>
+    <div class="d-flex justify-content-center align-items-center w-100">
+      <div
+        id="liveToast"
+        class="position-fixed top-50 start-50 translate-middle z-3 toast align-items-center border-0"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

@@ -187,6 +187,8 @@ export async function favourite(imgId, imgType) {
           ? await CatAPI.deleteFavourite(favouriteId)
           : await DogAPI.deleteFavourite(favouriteId);
       console.log("favourite() DELETE response:", response);
+      // Show success mesage
+      pushMessage("success", `You deleted image #${favouriteId} from favorites.`);
       // If isFavourites - reload gallery
       isFavourites && favouritesLoad();
     } else {
@@ -197,9 +199,12 @@ export async function favourite(imgId, imgType) {
       console.log("favourite() POST response:", response);
       const data = await response.data;
       console.log("favourite() POST data:", data);
+      // Show success mesage
+      pushMessage("success", `You added image #${data.id} to favorites.`);
     }
   } catch (error) {
     console.log("favourite() ERROR:", error);
+    pushMessage("error", error.message);
   }
 
   async function getFavouriteId(imgId, imgType) {
@@ -254,4 +259,20 @@ function clear() {
   while (main.firstChild) {
     main.removeChild(main.firstChild);
   }
+}
+
+function pushMessage(type, message) {
+  const toastLiveExample = document.getElementById("liveToast");
+  switch (type) {
+    case "error":
+      toastLiveExample.classList.add("text-bg-danger");
+      break;
+    case "success":
+      toastLiveExample.classList.add("text-bg-success");
+      break;
+  }
+  toastLiveExample.querySelector(".toast-body").textContent = message;
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+  console.log("toastBootstrap", toastBootstrap);
+  toastBootstrap.show();
 }
