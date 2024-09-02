@@ -10,9 +10,9 @@ let instance = axios.create({
 });
 
 // Get Images
-export const getImages = (page = 0, limit = 10, order = "DESC") =>
+export const getImages = (page = 0, limit = 10, order = "DESC", breeds = []) =>
   instance.get(
-    `images/search?has_breeds=true&limit=${limit}&page=${page}&order=${order}`
+    `images/search?has_breeds=true&limit=${limit}&page=${page}&order=${order}&breed_ids=${breeds.join(",")}`
   );
 
 // Get Breeds

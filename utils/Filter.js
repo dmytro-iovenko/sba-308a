@@ -1,3 +1,6 @@
+import * as Gallery from "./Gallery.js";
+import { loadFilteredImagesToGallery } from "../index.js";
+
 // Load filters
 export function loadFilters(animalTypes) {
   // The filters element
@@ -16,11 +19,19 @@ export function loadFilters(animalTypes) {
   // Add event listeners for type checkboxes
   document.querySelectorAll(".type-checkbox").forEach((typeCheckbox) => {
     typeCheckbox.addEventListener("change", handleTypeCheckboxChange);
+    typeCheckbox.addEventListener("click", (event) => {
+      console.log("OK");
+      event.stopImmediatePropagation();
+    });
   });
   // Add event listeners for breed checkboxes
   document.querySelectorAll(".breed-checkbox").forEach((breedCheckbox) => {
     breedCheckbox.addEventListener("change", handleBreedCheckboxChange);
   });
+
+  // The apply filter button
+  const applyButton = document.querySelector("button#apply");
+  applyButton.addEventListener("click", handleApplyButtonClick);
 }
 
 // Function to set up filter type item from template
@@ -98,3 +109,26 @@ function updateTypeCheckboxAppearance(typebox) {
       typebox.indeterminate = false;
   }
 }
+
+function handleApplyButtonClick(event) {
+  event.preventDefault();
+  const selectedBreeds = {};
+
+  document
+    .querySelectorAll("#filters input[type=checkbox]:checked")
+    .forEach((input) => {
+      console.log(input);
+      if (input.classList.contains("breed-checkbox")) {
+        const type = input.dataset.type;
+        if (!selectedBreeds[type]) selectedBreeds[type] = [];
+        selectedBreeds[type].push(input.value);
+      }
+    });
+
+  console.log(selectedBreeds);
+  // Clear galery before populate new items
+  Gallery.clear();
+  // Load filtered images to gallery
+  loadFilteredImagesToGallery(selectedBreeds);
+}
+

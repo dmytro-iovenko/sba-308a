@@ -9,6 +9,16 @@ let page = 0;
 // Flag to check if a lazy load request is already running
 let isLazyLoad = false;
 
+// Create galery params to use them in fetch
+const params = {
+  page: 0,
+  limit: 10,
+  order: "DESC",
+  breeds: {},
+  isFiltered: false,
+  isNextPage: true,
+};
+
 // Add scroll event for lazy load
 window.addEventListener("scroll", lazyLoad);
 
@@ -16,7 +26,7 @@ window.addEventListener("scroll", lazyLoad);
   // Clear galery before populate new items
   Gallery.clear();
   // Load images to gallery
-  loadImagesToGallery();
+  loadImagesToGallery(params);
   // Load Filters
   loadFilters();
 })();
@@ -45,12 +55,25 @@ async function loadFilters() {
   }
 }
 
+// Load filtered images to gallery
+export function loadFilteredImagesToGallery(breeds) {
+  params.page = 0;
+  params.isFiltered = true;
+  params.breeds = breeds;
+  loadImagesToGallery(params);
+}
+
 // Load images to gallery
-async function loadImagesToGallery(page = 0, limit = 10, order = "DESC") {
+async function loadImagesToGallery(params) {
   try {
+    const { page, limit, order, breeds, isFiltered } = params;
     // Fetch images from Cat API and Dog API
-    const catFetch = await CatAPI.getImages(page, limit, order);
-    const dogFetch = await DogAPI.getImages(page, limit, order);
+    const catFetch = isFiltered
+      ? CatAPI.getImages(page, limit, order, breeds.cats || ["none"])
+      : CatAPI.getImages(page, limit, order);
+    const dogFetch = isFiltered
+      ? DogAPI.getImages(page, limit, order, breeds.dogs || ["none"])
+      : DogAPI.getImages(page, limit, order);
     console.log(catFetch, dogFetch);
     // Get images data simultaneously
     const [catData, dogData] = await Promise.all([catFetch, dogFetch]);
@@ -61,6 +84,8 @@ async function loadImagesToGallery(page = 0, limit = 10, order = "DESC") {
     console.log(catImages, dogImages);
     // Combine and shuffle all images using spread operator
     const images = shuffleImages([...catImages, ...dogImages]);
+    // If return images, set isNextPage to true, otherwise false
+    params.isNextPage = images.length > 0;
     // For each image in the response array, create a new element and append it to the carousel
     images.forEach(async (image) => {
       // Create gallery item using HTML template
@@ -72,10 +97,11 @@ async function loadImagesToGallery(page = 0, limit = 10, order = "DESC") {
       // Apply Masonry script to updated gallery
       new Masonry(".gallery", { percentPosition: true });
     });
-    // Reset isLazyLoadStarted flag
-    isLazyLoad = false;
   } catch (error) {
     console.log("ERROR:", error);
+  } finally {
+    // Reset isLazyLoadStarted flag
+    isLazyLoad = false;
   }
 }
 
@@ -88,8 +114,11 @@ function shuffleImages(images) {
 function lazyLoad() {
   const scrolledHeight = window.innerHeight + window.scrollY;
   const totalHeight = document.body.offsetHeight - 5;
-  if (!isLazyLoad && scrolledHeight > totalHeight) {
+  const isNextPage = params.isNextPage;
+  if (isNextPage && !isLazyLoad && scrolledHeight > totalHeight) {
     isLazyLoad = true;
-    loadImagesToGallery(++page);
+    params.page++;
+    console.log(params);
+    loadImagesToGallery(params);
   }
 }
