@@ -84,8 +84,8 @@ async function loadImagesToGallery(params) {
     const [catData, dogData] = await Promise.all([catFetch, dogFetch]);
     console.log(catData, dogData);
     // Parse JSON responses from fetched data into objects arrays
-    const catImages = await catData.data;
-    const dogImages = await dogData.data;
+    const catImages = await catData.data.map((i) => ({ ...i, type: "cats" }));
+    const dogImages = await dogData.data.map((i) => ({ ...i, type: "dogs" }));
     console.log(catImages, dogImages);
     // Combine and shuffle all images using spread operator
     const images = shuffleImages([...catImages, ...dogImages]);
@@ -94,7 +94,7 @@ async function loadImagesToGallery(params) {
     // For each image in the response array, create a new element and append it to the carousel
     images.forEach(async (image) => {
       // Create gallery item using HTML template
-      const galleryItem = Gallery.createGalleryItem(image.url, "...", image.id);
+      const galleryItem = Gallery.createGalleryItem(image.id, image.type);
       // Append each of these new elements to the gallery
       Gallery.appendGallery(galleryItem);
       // Wait until image loads and completely renders
@@ -125,5 +125,48 @@ function lazyLoad() {
     params.page++;
     console.log(params);
     loadImagesToGallery(params);
+  }
+}
+
+export async function favourite(imgId, imgType) {
+  console.log("favourite():", imgId, imgType);
+  try {
+    const favouriteId = await getFavoriteId(imgId);
+    if (favouriteId) {
+      const response =
+        imgType === "cats"
+          ? await CatAPI.deleteFavorite(favouriteId)
+          : await DogAPI.deleteFavorite(favouriteId);
+      console.log("favourite() DELETE response:", response);
+    } else {
+      const response =
+        imgType === "cats"
+          ? await CatAPI.addFavorite(imgId)
+          : await DogAPI.addFavorite(imgId);
+      console.log("favourite() POST response:", response);
+      const data = await response.data;
+      console.log("favourite() POST data:", data);
+    }
+  } catch (error) {
+    console.log("favourite() ERROR:", error);
+  }
+
+  async function getFavoriteId(imgId, imgType) {
+    try {
+      const response =
+        imgType === "cats"
+          ? await CatAPI.getFavorites()
+          : await DogAPI.getFavorites();
+      console.log("getFavoriteId() response:", response);
+      const data = await response.data;
+      console.log("favourite() POST data:", data);
+      const favouriteId = data
+        .filter((item) => item.image_id === imgId)
+        .reduce((id, item) => item.id, null);
+      console.log("getFavoriteId() return:", favouriteId);
+      return favouriteId;
+    } catch (error) {
+      console.log("getFavoriteId() ERROR:", error);
+    }
   }
 }

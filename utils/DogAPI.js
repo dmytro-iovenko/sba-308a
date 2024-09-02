@@ -17,3 +17,16 @@ export const getImages = (page = 0, limit = 10, order = "DESC", breeds = []) =>
 
 // Get Breeds
 export const getBreeds = () => instance.get(`breeds`);
+
+// Get Favorites
+export const getFavorites = () => instance.get("favourites");
+
+// Add Favourite ID
+export const addFavorite = (imgId) =>
+  instance.post("favourites", {
+    image_id: imgId,
+    sub_id: "SBA 308A",
+  });
+
+// Delete Favourite ID
+export const deleteFavorite = (imgId) => instance.delete(`favourites/${imgId}`);

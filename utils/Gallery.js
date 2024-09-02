@@ -1,9 +1,18 @@
+import { favourite } from "../index.js";
+
 // The gallery element.
 const gallery = document.querySelector(".gallery");
 
-export function createGalleryItem() {
+export function createGalleryItem(imgId, imgType) {
   const template = document.querySelector("#galleryItemTemplate");
-  return template.content.firstElementChild.cloneNode(true);
+  const clone = template.content.firstElementChild.cloneNode(true);
+
+  const favBtn = clone.querySelector(".favourite-button");
+  favBtn.addEventListener("click", () => {
+    favourite(imgId, imgType);
+  });
+
+  return clone;
 }
 
 export function clear() {

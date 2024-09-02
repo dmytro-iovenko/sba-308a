@@ -12,8 +12,23 @@ const instance = axios.create({
 // Get Images
 export const getImages = (page = 0, limit = 10, order = "DESC", breeds = []) =>
   instance.get(
-    `images/search?has_breeds=true&limit=${limit}&page=${page}&order=${order}&breed_ids=${breeds.join(",")}`
+    `images/search?has_breeds=true&limit=${limit}&page=${page}&order=${order}&breed_ids=${breeds.join(
+      ","
+    )}`
   );
 
 // Get Breeds
 export const getBreeds = () => instance.get(`breeds`);
+
+// Get Favorites
+export const getFavorites = () => instance.get("favourites");
+
+// Add Favourite ID
+export const addFavorite = (imgId) =>
+  instance.post("favourites", {
+    image_id: imgId,
+    sub_id: "SBA 308A",
+  });
+
+// Delete Favourite ID
+export const deleteFavorite = (imgId) => instance.delete(`favourites/${imgId}`);
