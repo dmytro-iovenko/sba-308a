@@ -9,6 +9,9 @@ let isLazyLoad = false;
 // Create galery params to use them in fetch
 let params = {};
 
+// The main element.
+export const main = document.querySelector("main");
+
 // The navbar element.
 const navbar = document.querySelector(".navbar");
 
@@ -36,7 +39,7 @@ function routeUrl(url = window.location) {
   console.log(url);
   switch (url.hash) {
     case "#favourites":
-      getFavourites();
+      favouritesLoad();
       break;
     case "#gallery":
       initialLoad();
@@ -48,8 +51,12 @@ function routeUrl(url = window.location) {
 }
 
 function initialLoad() {
-  // Clear galery before populate new items
-  Gallery.clear();
+  // Clear content
+  clear();
+  // Display filter
+  Filter.displayFilter();
+  // Display gallery
+  Gallery.displayGallery();
   // Initialize params
   params = {
     page: 0,
@@ -63,6 +70,17 @@ function initialLoad() {
   loadImagesToGallery(params);
   // Load Filters
   loadFilters();
+}
+
+function favouritesLoad() {
+  // Clear content
+  clear();
+  // Disable Lazy Load
+  params.isNextPage = false;
+  // Display gallery
+  Gallery.displayGallery();
+  // Load favourited images to gallery
+  loadFavouritedImagesToGallery();
 }
 
 // Load filters
@@ -124,16 +142,7 @@ async function loadImagesToGallery(params) {
     // If return images, set isNextPage to true, otherwise false
     params.isNextPage = images.length > 0;
     // For each image in the response array, create a new element and append it to the carousel
-    images.forEach(async (image) => {
-      // Create gallery item using HTML template
-      const galleryItem = Gallery.createGalleryItem(image.id, image.type);
-      // Append each of these new elements to the gallery
-      Gallery.appendGallery(galleryItem);
-      // Wait until image loads and completely renders
-      await Gallery.loadImage(image.url, galleryItem);
-      // Apply Masonry script to updated gallery
-      new Masonry(".gallery", { percentPosition: true });
-    });
+    images.forEach((i) => Gallery.renderImage(i.id, i.type, i.url));
   } catch (error) {
     console.log("ERROR:", error);
   } finally {
@@ -203,37 +212,30 @@ export async function favourite(imgId, imgType) {
   }
 }
 
-async function getFavourites() {
-  // Disable Lazy Load
-  params.isNextPage = false;
-  // Clear galery before populate new items
-  Gallery.clear();
+async function loadFavouritedImagesToGallery() {
   try {
     // Fetch breeds from Cat API and Dog API
     const catFetch = await CatAPI.getFavourites();
     const dogFetch = await DogAPI.getFavourites();
-    console.log("getFavourites() fetch:", catFetch, dogFetch);
+    console.log("loadFavouritedImagesToGallery() fetch:", catFetch, dogFetch);
     // Get images data simultaneously
     const [catData, dogData] = await Promise.all([catFetch, dogFetch]);
-    console.log("getFavourites() data:", catData, dogData);
+    console.log("loadFavouritedImagesToGallery() data:", catData, dogData);
     // Parse JSON responses from fetched data into objects arrays
     const catImages = await catData.data.map((i) => ({ ...i, type: "cats" }));
     const dogImages = await dogData.data.map((i) => ({ ...i, type: "dogs" }));
-    console.log("getFavourites() images:", catImages, dogImages);
+    console.log("loadFavouritedImagesToGallery() images:", catImages, dogImages);
     // Combine and shuffle all images using spread operator
-    const favourites = shuffleImages([...catImages, ...dogImages]);
+    const images = shuffleImages([...catImages, ...dogImages]);
     // For each image in the response array, create a new element and append it to the carousel
-    favourites.forEach(async (fav) => {
-      // Create gallery item using HTML template
-      const galleryItem = Gallery.createGalleryItem(fav.image_id, fav.type);
-      // Append each of these new elements to the gallery
-      Gallery.appendGallery(galleryItem);
-      // Wait until image loads and completely renders
-      await Gallery.loadImage(fav.image.url, galleryItem);
-      // Apply Masonry script to updated gallery
-      new Masonry(".gallery", { percentPosition: true });
-    });
+    images.forEach((i) => Gallery.renderImage(i.image_id, i.type, i.image.url));
   } catch (error) {
-    console.log("getFavourites() ERROR:", error);
+    console.log("loadFavouritedImagesToGallery() ERROR:", error);
+  }
+}
+
+function clear() {
+  while (main.firstChild) {
+    main.removeChild(main.firstChild);
   }
 }

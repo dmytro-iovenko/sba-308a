@@ -1,9 +1,23 @@
-import { loadFilteredImagesToGallery } from "../index.js";
+import { main, loadFilteredImagesToGallery } from "../index.js";
+
+// Create filter button
+const filterButton = createFilterButton();
+// Create filter container
+const filterContainer = createFilter();
+
+export function displayFilter() {
+  // Append filter button to main element
+  main.prepend(filterButton);
+  // Append filter container to main element
+  main.appendChild(filterContainer);
+}
 
 // Load filters
 export function loadFilters(animalTypes) {
   // The filters element
-  const filters = document.getElementById("filters");
+  const filters = filterContainer.querySelector("#filters");
+  // Clear old filters
+  clearFilters()
   // Create and append filter items for each animal type
   animalTypes.forEach((animal) => {
     const typeItem = createFilterTypeItem(animal.type);
@@ -142,4 +156,23 @@ function handleResetButtonClick(event) {
     });
   // Load images to gallery
   loadFilteredImagesToGallery(false);
+}
+
+function createFilter() {
+  const template = document.querySelector("#filterTemplate");
+  const clone = template.content.firstElementChild.cloneNode(true);
+  return clone;
+}
+
+function createFilterButton() {
+  const template = document.querySelector("#filterButtonTemplate");
+  const clone = template.content.firstElementChild.cloneNode(true);
+  return clone;
+}
+
+function clearFilters() {
+  const filters = filterContainer.querySelector("#filters");
+  while (filters.firstChild) {
+    filters.removeChild(filters.firstChild);
+  }
 }

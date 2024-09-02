@@ -1,7 +1,18 @@
-import { favourite } from "../index.js";
+import { main, favourite } from "../index.js";
 
-// The gallery element.
-const gallery = document.querySelector(".gallery");
+// Create gallery element.
+const gallery = createGallery();
+
+function createGallery() {
+  const template = document.querySelector("#galleryTemplate");
+  const clone = template.content.firstElementChild.cloneNode(true);
+  return clone;
+}
+
+export function displayGallery() {
+  main.appendChild(gallery);
+  clear();
+}
 
 export function createGalleryItem(imgId, imgType) {
   const template = document.querySelector("#galleryItemTemplate");
@@ -32,4 +43,15 @@ export async function loadImage(url, elem) {
     img.onerror = reject;
     img.src = url;
   });
+}
+
+export async function renderImage(id, type, url) {
+  // Create gallery item using HTML template
+  const galleryItem = createGalleryItem(id, type);
+  // Append each of these new elements to the gallery
+  appendGallery(galleryItem);
+  // Wait until image loads and completely renders
+  await loadImage(url, galleryItem);
+  // Apply Masonry script to updated gallery
+  new Masonry(".gallery", { percentPosition: true });
 }
