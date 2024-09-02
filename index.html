@@ -23,19 +23,36 @@
     <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"></script>
   </head>
   <body class="bg-light">
-    <header>
-      <h1>Cats&Dogs Image Gallery</h1>
-      <button
-        class="btn btn-primary"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#filterImages"
-        aria-controls="filterImages"
-      >
-        Filter Images
-      </button>
-    </header>
-    <main class="container my-4">
+    <nav class="navbar navbar-expand-sm bg-info p-2" data-bs-theme="dark">
+      <div class="container-fluid">
+          <a class="navbar-brand" href="#">Cats&Dogs Image Gallery</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Gallery</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Favourites</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <main>
+        <div class="d-grid gap-2 d-flex justify-content-end p-2 sticky-top">
+            <button
+            class="btn btn-primary"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#filterImages"
+            aria-controls="filterImages"
+          >
+            Filter Images
+          </button>
+            </div>
       <div class="gallery row gx-0"></div>
     </main>
     <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="filterImages" aria-labelledby="filterImagesLabel">
@@ -45,9 +62,11 @@
       </div>
       <div class="offcanvas-body">
         <form id="filterForm">
+          <div class="d-flex gap-1">
+            <button id="apply" class="btn btn-primary flex-fill">Apply Filter</button>
+            <button id="reset" class="btn btn-secondary">Reset</button>
+          </div>
           <div id="filters" class="form-group accordion"></div>
-          <button id="apply" class="btn btn-primary">Apply Filter</button>
-          <button id="reset" class="btn btn-secondary">Reset Filter</button>
         </form>
       </div>
     </div>

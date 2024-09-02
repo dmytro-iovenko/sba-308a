@@ -13,18 +13,7 @@
 
 body {
   font-family: Arial, sans-serif;
-  background-color: var(--background);
-}
-
-header {
-  background-color: var(--primary);
-  color: white;
-  padding: 20px;
-  max-width: 1200px;
-}
-
-header h1 {
-  margin: 0;
+  /* background-color: var(--background); */
 }
 
 main {
