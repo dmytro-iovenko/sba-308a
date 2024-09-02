@@ -25,22 +25,32 @@
   <body class="bg-light">
     <header>
       <h1>Cats&Dogs Image Gallery</h1>
+      <button
+        class="btn btn-primary"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#filterImages"
+        aria-controls="filterImages"
+      >
+        Filter Images
+      </button>
     </header>
     <main class="container my-4">
-      <div class="row">
-        <div class="col-md-9">
-          <div class="gallery row gx-0"></div>
-        </div>
-        <div class="col-md-3">
-          <h3>Filter Images</h3>
-          <form id="filterForm">
-            <div id="filters" class="form-group accordion"></div>
-            <button id="apply" class="btn btn-primary">Apply Filter</button>
-            <button id="reset" class="btn btn-secondary">Reset Filter</button>
-        </form>
-        </div>
-      </div>
+      <div class="gallery row gx-0"></div>
     </main>
+    <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="filterImages" aria-labelledby="filterImagesLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="filterImagesLabel">Filter Images</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <form id="filterForm">
+          <div id="filters" class="form-group accordion"></div>
+          <button id="apply" class="btn btn-primary">Apply Filter</button>
+          <button id="reset" class="btn btn-secondary">Reset Filter</button>
+        </form>
+      </div>
+    </div>
     <!-- Gallery Item Template -->
     <template id="galleryItemTemplate">
       <div class="col-md-3 col-sm-6 col-12 mb-3">

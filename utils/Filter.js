@@ -1,4 +1,3 @@
-import * as Gallery from "./Gallery.js";
 import { loadFilteredImagesToGallery } from "../index.js";
 
 // Load filters
