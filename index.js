@@ -17,16 +17,23 @@ navbar.addEventListener("click", (e) => {
   console.log(e.target);
   // Immediately return if the element clicked was not an <a> element.
   if (e.target.tagName.toLowerCase() !== "a") return;
-  // Call the event object's preventDefault() method
-  e.preventDefault();
   // Add the active class to the <a> element that was clicked
   e.target.classList.add("active");
   //remove the active class from each other <a> element in navbar
   navbar.querySelectorAll(".nav-link").forEach((link) => {
     if (e.target !== link) link.classList.remove("active");
   });
-  // Convert href to Url object
-  const url = new URL(e.target.href);
+  // Convert href to Url object and route
+  routeUrl(new URL(e.target.href));
+});
+
+// Add scroll event for lazy load
+window.addEventListener("scroll", lazyLoad);
+
+window.addEventListener("DOMContentLoaded", () => routeUrl());
+
+function routeUrl(url = window.location) {
+  console.log(url);
   switch (url.hash) {
     case "#favourites":
       getFavourites();
@@ -38,10 +45,7 @@ navbar.addEventListener("click", (e) => {
       initialLoad();
       break;
   }
-});
-
-// Add scroll event for lazy load
-window.addEventListener("scroll", lazyLoad);
+}
 
 function initialLoad() {
   // Clear galery before populate new items
@@ -60,8 +64,6 @@ function initialLoad() {
   // Load Filters
   loadFilters();
 }
-
-initialLoad();
 
 // Load filters
 async function loadFilters() {
@@ -200,8 +202,6 @@ export async function favourite(imgId, imgType) {
     }
   }
 }
-
-getFavouritesBtn.addEventListener("click", getFavourites);
 
 async function getFavourites() {
   // Disable Lazy Load
