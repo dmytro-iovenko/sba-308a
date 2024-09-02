@@ -10,6 +10,8 @@ export function displayFilter() {
   main.prepend(filterButton);
   // Append filter container to main element
   main.appendChild(filterContainer);
+  // Reset badge
+  setBadge(false);
 }
 
 // Load filters
@@ -17,7 +19,7 @@ export function loadFilters(animalTypes) {
   // The filters element
   const filters = filterContainer.querySelector("#filters");
   // Clear old filters
-  clearFilters()
+  clearFilters();
   // Create and append filter items for each animal type
   animalTypes.forEach((animal) => {
     const typeItem = createFilterTypeItem(animal.type);
@@ -128,7 +130,7 @@ function updateTypeCheckboxAppearance(typebox) {
 function handleApplyButtonClick(event) {
   event.preventDefault();
   const selectedBreeds = {};
-
+  let count = 0;
   document
     .querySelectorAll("#filters input[type=checkbox]:checked")
     .forEach((input) => {
@@ -137,12 +139,16 @@ function handleApplyButtonClick(event) {
         const type = input.dataset.type;
         if (!selectedBreeds[type]) selectedBreeds[type] = [];
         selectedBreeds[type].push(input.value);
+        count++;
       }
     });
-
-  console.log(selectedBreeds);
-  // Load filtered images to gallery
-  loadFilteredImagesToGallery(true, selectedBreeds);
+  console.log("SelectedBreeds:", selectedBreeds);
+  if (count) {
+    // Set badge to filter button
+    setBadge(count);
+    // Load filtered images to gallery
+    loadFilteredImagesToGallery(true, selectedBreeds);
+  }
 }
 
 function handleResetButtonClick(event) {
@@ -156,6 +162,8 @@ function handleResetButtonClick(event) {
     });
   // Load images to gallery
   loadFilteredImagesToGallery(false);
+  // Reset badge
+  setBadge(false);
 }
 
 function createFilter() {
@@ -175,4 +183,11 @@ function clearFilters() {
   while (filters.firstChild) {
     filters.removeChild(filters.firstChild);
   }
+}
+
+function setBadge(value) {
+  const button = filterButton.querySelector("button");
+  button.innerHTML = value
+    ? `Filter Images <span class="badge bg-danger">${value}</span>`
+    : "Filter Images";
 }
