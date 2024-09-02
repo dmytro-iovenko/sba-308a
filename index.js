@@ -1,5 +1,6 @@
 import * as Gallery from "./utils/Gallery.js";
 import * as Filter from "./utils/Filter.js";
+import * as ProgressBar from "./utils/ProgressBar.js";
 import * as CatAPI from "./utils/CatAPI.js";
 import * as DogAPI from "./utils/DogAPI.js";
 
@@ -156,6 +157,8 @@ async function loadImagesToGallery(params) {
   } finally {
     // Reset isLazyLoadStarted flag
     isLazyLoad = false;
+    // Reset ProgressBar
+    ProgressBar.reset();
   }
 }
 
@@ -173,6 +176,7 @@ function lazyLoad() {
     isLazyLoad = true;
     params.page++;
     console.log(params);
+    ProgressBar.set(1)
     loadImagesToGallery(params);
   }
 }
@@ -188,7 +192,10 @@ export async function favourite(imgId, imgType) {
           : await DogAPI.deleteFavourite(favouriteId);
       console.log("favourite() DELETE response:", response);
       // Show success mesage
-      pushMessage("success", `You deleted image #${favouriteId} from favorites.`);
+      pushMessage(
+        "success",
+        `You deleted image #${favouriteId} from favorites.`
+      );
       // If isFavourites - reload gallery
       isFavourites && favouritesLoad();
     } else {
@@ -252,6 +259,9 @@ async function loadFavouritedImagesToGallery() {
     );
   } catch (error) {
     console.log("loadFavouritedImagesToGallery() ERROR:", error);
+  } finally {
+    // Reset ProgressBar
+    ProgressBar.reset();
   }
 }
 
