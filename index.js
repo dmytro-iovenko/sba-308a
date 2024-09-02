@@ -19,6 +19,9 @@ export const main = document.querySelector("main");
 // The navbar element.
 const navbar = document.querySelector(".navbar");
 
+// Title element
+const title = document.createElement("h2");
+
 // Add click event for navbar elements
 navbar.addEventListener("click", (e) => {
   console.log(e.target);
@@ -58,6 +61,10 @@ function routeUrl(url = window.location) {
 function initialLoad() {
   // Clear content
   clear();
+  // Set title and append to main
+  title.textContent = "Gallery";
+  title.classList.add("float-start");
+  main.appendChild(title);
   // Reset isFavourites
   isFavourites = false;
   // Display filter
@@ -82,6 +89,10 @@ function initialLoad() {
 function favouritesLoad() {
   // Clear content
   clear();
+  // Set title and append to main
+  title.textContent = "Favourites";
+  title.classList.remove("float-start");
+  main.appendChild(title);
   // Enable isFavourites
   isFavourites = true;
   // Disable Lazy Load
@@ -118,6 +129,8 @@ async function loadFilters() {
 
 // Load filtered images to gallery
 export function loadFilteredImagesToGallery(isFiltered = true, breeds = {}) {
+  // Update title
+  title.textContent = isFiltered ? "Filtered Gallery" : "Gallery";
   // Clear galery before populate new items
   Gallery.clear();
   // Load images to gallery
@@ -176,7 +189,7 @@ function lazyLoad() {
     isLazyLoad = true;
     params.page++;
     console.log(params);
-    ProgressBar.set(1)
+    ProgressBar.set(1);
     loadImagesToGallery(params);
   }
 }
@@ -213,7 +226,7 @@ export async function favourite(imgId, imgType) {
     console.log("favourite() ERROR:", error);
     pushMessage("error", error.message);
   } finally {
-    ProgressBar.reset()
+    ProgressBar.reset();
   }
 
   async function getFavouriteId(imgId, imgType) {

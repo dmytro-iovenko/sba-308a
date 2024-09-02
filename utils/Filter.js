@@ -7,7 +7,7 @@ const filterContainer = createFilter();
 
 export function displayFilter() {
   // Append filter button to main element
-  main.prepend(filterButton);
+  main.appendChild(filterButton);
   // Append filter container to main element
   main.appendChild(filterContainer);
   // Reset badge
