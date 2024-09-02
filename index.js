@@ -194,7 +194,7 @@ export async function favourite(imgId, imgType) {
       // Show success mesage
       pushMessage(
         "success",
-        `You deleted image #${favouriteId} from favorites.`
+        `You deleted image #${favouriteId} from favourites.`
       );
       // If isFavourites - reload gallery
       isFavourites && favouritesLoad();
@@ -207,11 +207,13 @@ export async function favourite(imgId, imgType) {
       const data = await response.data;
       console.log("favourite() POST data:", data);
       // Show success mesage
-      pushMessage("success", `You added image #${data.id} to favorites.`);
+      pushMessage("success", `You added image #${data.id} to favourites.`);
     }
   } catch (error) {
     console.log("favourite() ERROR:", error);
     pushMessage("error", error.message);
+  } finally {
+    ProgressBar.reset()
   }
 
   async function getFavouriteId(imgId, imgType) {
