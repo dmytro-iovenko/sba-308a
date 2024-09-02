@@ -3,14 +3,33 @@ import * as Filter from "./utils/Filter.js";
 import * as CatAPI from "./utils/CatAPI.js";
 import * as DogAPI from "./utils/DogAPI.js";
 
-// Set initial page number
-let page = 0;
-
 // Flag to check if a lazy load request is already running
 let isLazyLoad = false;
 
 // Create galery params to use them in fetch
 let params = {};
+
+// The navbar element.
+const navbar = document.querySelector(".navbar");
+
+// Add click event for navbar elements
+navbar.addEventListener("click", (e) => {
+  console.log(e.target);
+  // Immediately return if the element clicked was not an <a> element.
+  if (e.target.tagName.toLowerCase() !== "a") return;
+  // Call the event object's preventDefault() method
+  e.preventDefault();
+  // Add the active class to the <a> element that was clicked
+  e.target.classList.add("active");
+  // Convert href to Url object
+  const url = new URL(e.target.href);
+  switch (url.hash) {
+    case "#favourites":
+      getFavourites();
+      break;
+    default:
+  }
+});
 
 // Add scroll event for lazy load
 window.addEventListener("scroll", lazyLoad);
@@ -131,7 +150,7 @@ function lazyLoad() {
 export async function favourite(imgId, imgType) {
   console.log("favourite():", imgId, imgType);
   try {
-    const favouriteId = await getFavouriteId(imgId);
+    const favouriteId = await getFavouriteId(imgId, imgType);
     if (favouriteId) {
       const response =
         imgType === "cats"
@@ -168,5 +187,42 @@ export async function favourite(imgId, imgType) {
     } catch (error) {
       console.log("getFavouriteId() ERROR:", error);
     }
+  }
+}
+
+getFavouritesBtn.addEventListener("click", getFavourites);
+
+async function getFavourites() {
+  // Disable Lazy Load
+  params.isNextPage = false;
+  // Clear galery before populate new items
+  Gallery.clear();
+  try {
+    // Fetch breeds from Cat API and Dog API
+    const catFetch = await CatAPI.getFavourites();
+    const dogFetch = await DogAPI.getFavourites();
+    console.log("getFavourites() fetch:", catFetch, dogFetch);
+    // Get images data simultaneously
+    const [catData, dogData] = await Promise.all([catFetch, dogFetch]);
+    console.log("getFavourites() data:", catData, dogData);
+    // Parse JSON responses from fetched data into objects arrays
+    const catImages = await catData.data.map((i) => ({ ...i, type: "cats" }));
+    const dogImages = await dogData.data.map((i) => ({ ...i, type: "dogs" }));
+    console.log("getFavourites() images:", catImages, dogImages);
+    // Combine and shuffle all images using spread operator
+    const favourites = shuffleImages([...catImages, ...dogImages]);
+    // For each image in the response array, create a new element and append it to the carousel
+    favourites.forEach(async (fav) => {
+      // Create gallery item using HTML template
+      const galleryItem = Gallery.createGalleryItem(fav.image_id, fav.type);
+      // Append each of these new elements to the gallery
+      Gallery.appendGallery(galleryItem);
+      // Wait until image loads and completely renders
+      await Gallery.loadImage(fav.image.url, galleryItem);
+      // Apply Masonry script to updated gallery
+      new Masonry(".gallery", { percentPosition: true });
+    });
+  } catch (error) {
+    console.log("getFavourites() ERROR:", error);
   }
 }
