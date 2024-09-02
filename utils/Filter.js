@@ -28,10 +28,12 @@ export function loadFilters(animalTypes) {
   document.querySelectorAll(".breed-checkbox").forEach((breedCheckbox) => {
     breedCheckbox.addEventListener("change", handleBreedCheckboxChange);
   });
-
-  // The apply filter button
+  // Add event listener for apply filter button
   const applyButton = document.querySelector("button#apply");
   applyButton.addEventListener("click", handleApplyButtonClick);
+  // Add event listener for reset filter button
+  const resetButton = document.querySelector("button#reset");
+  resetButton.addEventListener("click", handleResetButtonClick);
 }
 
 // Function to set up filter type item from template
@@ -126,9 +128,19 @@ function handleApplyButtonClick(event) {
     });
 
   console.log(selectedBreeds);
-  // Clear galery before populate new items
-  Gallery.clear();
   // Load filtered images to gallery
-  loadFilteredImagesToGallery(selectedBreeds);
+  loadFilteredImagesToGallery(true, selectedBreeds);
 }
 
+function handleResetButtonClick(event) {
+  console.log("ResetButtonClick");
+  event.preventDefault();
+  document
+    .querySelectorAll("#filters input[type=checkbox]")
+    .forEach((checkbox) => {
+      checkbox.checked = false;
+      checkbox.indeterminate = false;
+    });
+  // Load images to gallery
+  loadFilteredImagesToGallery(false);
+}

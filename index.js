@@ -10,14 +10,7 @@ let page = 0;
 let isLazyLoad = false;
 
 // Create galery params to use them in fetch
-const params = {
-  page: 0,
-  limit: 10,
-  order: "DESC",
-  breeds: {},
-  isFiltered: false,
-  isNextPage: true,
-};
+let params = {};
 
 // Add scroll event for lazy load
 window.addEventListener("scroll", lazyLoad);
@@ -25,6 +18,15 @@ window.addEventListener("scroll", lazyLoad);
 (function initialLoad() {
   // Clear galery before populate new items
   Gallery.clear();
+  // Initialize params
+  params = {
+    page: 0,
+    limit: 10,
+    order: "DESC",
+    breeds: {},
+    isFiltered: false,
+    isNextPage: true,
+  };
   // Load images to gallery
   loadImagesToGallery(params);
   // Load Filters
@@ -56,9 +58,12 @@ async function loadFilters() {
 }
 
 // Load filtered images to gallery
-export function loadFilteredImagesToGallery(breeds) {
+export function loadFilteredImagesToGallery(isFiltered = true, breeds = {}) {
+  // Clear galery before populate new items
+  Gallery.clear();
+  // Load images to gallery
   params.page = 0;
-  params.isFiltered = true;
+  params.isFiltered = isFiltered;
   params.breeds = breeds;
   loadImagesToGallery(params);
 }
