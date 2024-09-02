@@ -21,20 +21,29 @@ navbar.addEventListener("click", (e) => {
   e.preventDefault();
   // Add the active class to the <a> element that was clicked
   e.target.classList.add("active");
+  //remove the active class from each other <a> element in navbar
+  navbar.querySelectorAll(".nav-link").forEach((link) => {
+    if (e.target !== link) link.classList.remove("active");
+  });
   // Convert href to Url object
   const url = new URL(e.target.href);
   switch (url.hash) {
     case "#favourites":
       getFavourites();
       break;
+    case "#gallery":
+      initialLoad();
+      break;
     default:
+      initialLoad();
+      break;
   }
 });
 
 // Add scroll event for lazy load
 window.addEventListener("scroll", lazyLoad);
 
-(function initialLoad() {
+function initialLoad() {
   // Clear galery before populate new items
   Gallery.clear();
   // Initialize params
@@ -50,7 +59,9 @@ window.addEventListener("scroll", lazyLoad);
   loadImagesToGallery(params);
   // Load Filters
   loadFilters();
-})();
+}
+
+initialLoad();
 
 // Load filters
 async function loadFilters() {
