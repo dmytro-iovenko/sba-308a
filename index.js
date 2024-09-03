@@ -20,7 +20,7 @@ export const main = document.querySelector("main");
 const navbar = document.querySelector(".navbar");
 
 // Title element
-const title = document.createElement("h2");
+const title = createTitle();
 
 // Add click event for navbar elements
 navbar.addEventListener("click", (e) => {
@@ -61,12 +61,10 @@ function routeUrl(url = window.location) {
 function initialLoad() {
   // Clear content
   clear();
-  // Set title and append to main
-  title.textContent = "Gallery";
-  title.classList.add("float-start");
-  main.appendChild(title);
   // Reset isFavourites
   isFavourites = false;
+  // Display title
+  displayTitle("Gallery");
   // Display filter
   Filter.displayFilter();
   // Display gallery
@@ -89,10 +87,8 @@ function initialLoad() {
 function favouritesLoad() {
   // Clear content
   clear();
-  // Set title and append to main
-  title.textContent = "Favourites";
-  title.classList.remove("float-start");
-  main.appendChild(title);
+  // Display title
+  displayTitle("Favourites");
   // Enable isFavourites
   isFavourites = true;
   // Disable Lazy Load
@@ -300,4 +296,15 @@ function pushMessage(type, message) {
   const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
   console.log("toastBootstrap", toastBootstrap);
   toastBootstrap.show();
+}
+
+function createTitle() {
+  const template = document.querySelector("#mainTitleTemplate");
+  const clone = template.content.firstElementChild.cloneNode(true);
+  return clone;
+}
+
+function displayTitle(text) {
+    title.textContent = text;
+    main.appendChild(title);
 }
