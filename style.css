@@ -87,7 +87,6 @@ main {
   transform: scale(1.05);
 } */
 
-.accordion-collapse {
-  max-height: 50vh;
-  overflow-y: scroll;
+.accordion-item {
+  min-height: calc(1.625rem + var(--bs-accordion-btn-padding-y) * 2);
 }

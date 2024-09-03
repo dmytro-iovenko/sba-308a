@@ -1,5 +1,9 @@
 import { main, loadFilteredImagesToGallery } from "../index.js";
 
+// Initialize current filters object and temporary filters object
+let currentFilters = {};
+let tempFilters = {};
+
 // Create filter button
 const filterButton = createFilterButton();
 // Create filter container
@@ -19,7 +23,7 @@ export function loadFilters(animalTypes) {
   // The filters element
   const filters = filterContainer.querySelector("#filters");
   // Clear old filters
-  clearFilters();
+  clearFilters(animalTypes);
   // Create and append filter items for each animal type
   animalTypes.forEach((animal) => {
     const typeItem = createFilterTypeItem(animal.type);
@@ -43,6 +47,9 @@ export function loadFilters(animalTypes) {
   document.querySelectorAll(".breed-checkbox").forEach((breedCheckbox) => {
     breedCheckbox.addEventListener("change", handleBreedCheckboxChange);
   });
+  // Add event listener for filter button
+  const button = filterButton.querySelector("button");
+  button.addEventListener("click", handleFilterButtonClick);
   // Add event listener for apply filter button
   const applyButton = document.querySelector("button#apply");
   applyButton.addEventListener("click", handleApplyButtonClick);
@@ -89,6 +96,14 @@ function handleTypeCheckboxChange(event) {
   );
   // Check or uncheck all breed checkboxes based on type checkbox state
   breedboxes.forEach((checkbox) => (checkbox.checked = typebox.checked));
+  // Add or delete data in tempFilters based on type checkbox state
+  !tempFilters[type] && (tempFilters[type] = new Set());
+  breedboxes.forEach((checkbox) =>
+    checkbox.checked
+      ? tempFilters[type].add(checkbox.value)
+      : tempFilters[type].delete(checkbox.value)
+  );
+  console.log("tempFilters:", tempFilters);
   // Update appearance of type checkbox
   updateTypeCheckboxAppearance(typebox);
 }
@@ -100,6 +115,12 @@ function handleBreedCheckboxChange(event) {
   const typebox = document.querySelector(
     `#filters .type-checkbox[value="${type}"]`
   );
+  // Add or delete data in tempFilters based on type checkbox state
+  !tempFilters[type] && (tempFilters[type] = new Set());
+  breedbox.checked
+    ? tempFilters[type].add(breedbox.value)
+    : tempFilters[type].delete(breedbox.value);
+  console.log("tempFilters:", tempFilters);
   // Update appearance of type checkbox
   updateTypeCheckboxAppearance(typebox);
 }
@@ -129,23 +150,38 @@ function updateTypeCheckboxAppearance(typebox) {
 
 function handleApplyButtonClick(event) {
   event.preventDefault();
-  const selectedBreeds = {};
-  let count = 0;
-  document
-    .querySelectorAll("#filters input[type=checkbox]:checked")
-    .forEach((input) => {
-      console.log(input);
-      if (input.classList.contains("breed-checkbox")) {
-        const type = input.dataset.type;
-        if (!selectedBreeds[type]) selectedBreeds[type] = [];
-        selectedBreeds[type].push(input.value);
-        count++;
-      }
-    });
+  const selectedBreeds = JSON.parse(
+    JSON.stringify(tempFilters, (_k, v) =>
+      v instanceof Set ? [...v].sort() : v
+    )
+  );
   console.log("SelectedBreeds:", selectedBreeds);
-  if (count) {
+
+  //   let count = 0;
+  //   document
+  //     .querySelectorAll("#filters input[type=checkbox]:checked")
+  //     .forEach((input) => {
+  //       console.log(input);
+  //       if (input.classList.contains("breed-checkbox")) {
+  //         const type = input.dataset.type;
+  //         !selectedBreeds[type] && (selectedBreeds[type] = []);
+  //         selectedBreeds[type].push(input.value);
+  //         count++;
+  //       }
+  //     });
+  //   console.log("SelectedBreeds:", selectedBreeds);
+  if (JSON.stringify(selectedBreeds) !== JSON.stringify(currentFilters)) {
+    // Set currentFilters to selectedBreeds
+    currentFilters = selectedBreeds;
+    // Count total number of selected breeds
+    let count = 0;
+    for (const type in selectedBreeds) {
+      selectedBreeds[type].forEach((_e) => count++);
+    }
     // Set badge to filter button
     setBadge(count);
+    // Hide filter canvas
+    hideFilter();
     // Load filtered images to gallery
     loadFilteredImagesToGallery(true, selectedBreeds);
   }
@@ -154,16 +190,24 @@ function handleApplyButtonClick(event) {
 function handleResetButtonClick(event) {
   console.log("ResetButtonClick");
   event.preventDefault();
-  document
-    .querySelectorAll("#filters input[type=checkbox]")
-    .forEach((checkbox) => {
-      checkbox.checked = false;
-      checkbox.indeterminate = false;
-    });
-  // Load images to gallery
-  loadFilteredImagesToGallery(false);
-  // Reset badge
-  setBadge(false);
+  // Count total number of selected filters
+  let count = 0;
+  for (const type in currentFilters) {
+    currentFilters[type].forEach((_e) => count++);
+  }
+  // If any filters selected, reset all of them
+  if (count) {
+    // Reset currentFilters
+    currentFilters = {};
+    // Reset all checkboxes
+    resetAllCheckboxes();
+    // Reset badge
+    setBadge(false);
+    // Hide filter canvas
+    hideFilter();
+    // Load images to gallery
+    loadFilteredImagesToGallery(false);
+  }
 }
 
 function createFilter() {
@@ -178,11 +222,12 @@ function createFilterButton() {
   return clone;
 }
 
-function clearFilters() {
+function clearFilters(animalTypes) {
   const filters = filterContainer.querySelector("#filters");
   while (filters.firstChild) {
     filters.removeChild(filters.firstChild);
   }
+  animalTypes.forEach((animal) => (currentFilters[animal.type] = new Set()));
 }
 
 function setBadge(value) {
@@ -190,4 +235,69 @@ function setBadge(value) {
   button.innerHTML = value
     ? `Filter Images <span class="badge bg-danger">${value}</span>`
     : "Filter Images";
+}
+
+function handleFilterButtonClick() {
+  // Reset all checkboxes before further process
+  resetAllCheckboxes();
+  console.log("currentFilters", currentFilters);
+  for (const type in currentFilters) {
+    console.log(`${type}: ${currentFilters[type]}`);
+    tempFilters[type] = new Set(currentFilters[type]);
+    currentFilters[type].forEach((breed) => {
+      const checkbox = document.querySelector(
+        `#filters .breed-checkbox[value="${breed}"]`
+      );
+      checkbox && (checkbox.checked = true);
+    });
+    const breedboxes = document.querySelectorAll(
+      `#filters .breed-checkbox[data-type="${type}"]`
+    );
+    const all = Array.from(breedboxes).every((checkbox) => checkbox.checked);
+    const any = Array.from(breedboxes).some((checkbox) => checkbox.checked);
+    const typebox = document.querySelector(
+      `#filters .type-checkbox[value="${type}"]`
+    );
+    // Update type checkbox based on breed checkboxes' states
+    switch (true) {
+      case all:
+        typebox.checked = true;
+        typebox.indeterminate = false;
+        break;
+      case any:
+        typebox.checked = true;
+        typebox.indeterminate = true;
+        break;
+      default:
+        typebox.checked = false;
+        typebox.indeterminate = false;
+    }
+  }
+  showFilter();
+}
+
+function showFilter() {
+  let myOffCanvas = document.getElementById("filterImages");
+  console.log(myOffCanvas);
+  let openedCanvas = new bootstrap.Offcanvas(myOffCanvas);
+  openedCanvas.show();
+}
+
+function hideFilter() {
+  let myOffCanvas = document.getElementById("filterImages");
+  let openedCanvas = bootstrap.Offcanvas.getInstance(myOffCanvas);
+  openedCanvas.hide();
+  // Reset tempFilters
+  tempFilters = {};
+}
+
+function resetAllCheckboxes() {
+  document
+    .querySelectorAll("#filters input[type=checkbox]")
+    .forEach((checkbox) => {
+      checkbox.checked = false;
+      checkbox.indeterminate = false;
+    });
+  // Reset tempFilters
+  tempFilters = {};
 }
