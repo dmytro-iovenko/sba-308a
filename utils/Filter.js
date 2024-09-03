@@ -157,27 +157,14 @@ function handleApplyButtonClick(event) {
   );
   console.log("SelectedBreeds:", selectedBreeds);
 
-  //   let count = 0;
-  //   document
-  //     .querySelectorAll("#filters input[type=checkbox]:checked")
-  //     .forEach((input) => {
-  //       console.log(input);
-  //       if (input.classList.contains("breed-checkbox")) {
-  //         const type = input.dataset.type;
-  //         !selectedBreeds[type] && (selectedBreeds[type] = []);
-  //         selectedBreeds[type].push(input.value);
-  //         count++;
-  //       }
-  //     });
-  //   console.log("SelectedBreeds:", selectedBreeds);
-  if (JSON.stringify(selectedBreeds) !== JSON.stringify(currentFilters)) {
+  // Count total number of selected breeds
+  let count = 0;
+  for (const type in selectedBreeds) {
+    selectedBreeds[type].forEach((_e) => count++);
+  }
+  if (count && JSON.stringify(selectedBreeds) !== JSON.stringify(currentFilters)) {
     // Set currentFilters to selectedBreeds
     currentFilters = selectedBreeds;
-    // Count total number of selected breeds
-    let count = 0;
-    for (const type in selectedBreeds) {
-      selectedBreeds[type].forEach((_e) => count++);
-    }
     // Set badge to filter button
     setBadge(count);
     // Hide filter canvas
