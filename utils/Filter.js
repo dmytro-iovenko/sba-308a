@@ -132,41 +132,49 @@ function updateTypeCheckboxAppearance(typebox) {
   );
   const all = Array.from(breedboxes).every((checkbox) => checkbox.checked);
   const any = Array.from(breedboxes).some((checkbox) => checkbox.checked);
+  // The apply filter button
+  const applyButton = document.querySelector("button#apply");
+  // The reset filter button
+  const resetButton = document.querySelector("button#reset");
   // Update type checkbox based on breed checkboxes' states
   switch (true) {
     case all:
       typebox.checked = true;
       typebox.indeterminate = false;
+      applyButton.disabled = false;
       break;
     case any:
       typebox.checked = true;
       typebox.indeterminate = true;
+      applyButton.disabled = false;
       break;
     default:
       typebox.checked = false;
       typebox.indeterminate = false;
+      resetButton.disabled = true;
+      applyButton.disabled = true;
   }
+  // Count total number of temp filters
+  let count = 0;
+  for (const type in tempFilters) {
+    tempFilters[type].forEach((_e) => count++);
+  }
+  // Enable apply filter button if filter has selected checkboxes and it does not equal previous selection
+  document.querySelector("button#apply").disabled = checkIfEmpty(tempFilters) || compareFilters(tempFilters, currentFilters);
+  // Enable reset filter button if filter has selected checkboxes
+  document.querySelector("button#reset").disabled = checkIfEmpty(tempFilters) || checkIfEmpty(currentFilters);
+  
 }
 
 function handleApplyButtonClick(event) {
   event.preventDefault();
-  const selectedBreeds = JSON.parse(
-    JSON.stringify(tempFilters, (_k, v) =>
-      v instanceof Set ? [...v].sort() : v
-    )
-  );
+  const selectedBreeds = JSON.parse(JSON.stringify(tempFilters, (_k, v) => v instanceof Set ? [...v].sort() : v));
   console.log("SelectedBreeds:", selectedBreeds);
-
-  // Count total number of selected breeds
-  let count = 0;
-  for (const type in selectedBreeds) {
-    selectedBreeds[type].forEach((_e) => count++);
-  }
-  if (count && JSON.stringify(selectedBreeds) !== JSON.stringify(currentFilters)) {
+  if (!(checkIfEmpty(selectedBreeds) || compareFilters(selectedBreeds, currentFilters))) {
     // Set currentFilters to selectedBreeds
     currentFilters = selectedBreeds;
     // Set badge to filter button
-    setBadge(count);
+    setBadge(countElements(selectedBreeds));
     // Hide filter canvas
     hideFilter();
     // Load filtered images to gallery
@@ -177,13 +185,8 @@ function handleApplyButtonClick(event) {
 function handleResetButtonClick(event) {
   console.log("ResetButtonClick");
   event.preventDefault();
-  // Count total number of selected filters
-  let count = 0;
-  for (const type in currentFilters) {
-    currentFilters[type].forEach((_e) => count++);
-  }
   // If any filters selected, reset all of them
-  if (count) {
+  if (!checkIfEmpty(currentFilters)) {
     // Reset currentFilters
     currentFilters = {};
     // Reset all checkboxes
@@ -260,6 +263,10 @@ function handleFilterButtonClick() {
         typebox.indeterminate = false;
     }
   }
+  // Disable apply filter button
+  document.querySelector("button#apply").disabled = true;
+  // Enable reset filter button if filter has selected checkboxes
+  document.querySelector("button#reset").disabled = checkIfEmpty(currentFilters);
   showFilter();
 }
 
@@ -287,4 +294,22 @@ function resetAllCheckboxes() {
     });
   // Reset tempFilters
   tempFilters = {};
+}
+
+function countElements(filter) {
+  let count = 0;
+  for (const type in filter) {
+        filter[type].forEach((_e) => count++);
+    }
+    return count;
+}
+
+function checkIfEmpty(filter) {
+    return countElements(filter) === 0;
+}
+
+function compareFilters(filter1, filter2) {
+    const string1 = JSON.stringify(filter1, (_k, v) => v instanceof Set ? [...v].sort() : v);
+    const string2 = JSON.stringify(filter2, (_k, v) => v instanceof Set ? [...v].sort() : v);
+    return string1 === string2;
 }

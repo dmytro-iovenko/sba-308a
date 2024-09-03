@@ -142,10 +142,10 @@ async function loadImagesToGallery(params) {
     const { page, limit, order, breeds, isFiltered } = params;
     // Fetch images from Cat API and Dog API
     const catFetch = isFiltered
-      ? CatAPI.getImages(page, limit, order, breeds.cats.length ? breeds.cats : ["none"])
+      ? CatAPI.getImages(page, limit, order, breeds.cats && breeds.cats.length ? breeds.cats : ["none"])
       : CatAPI.getImages(page, limit, order);
     const dogFetch = isFiltered
-      ? DogAPI.getImages(page, limit, order, breeds.dogs.length ? breeds.dogs : ["none"])
+      ? DogAPI.getImages(page, limit, order, breeds.dogs && breeds.dogs.length ? breeds.dogs : ["none"])
       : DogAPI.getImages(page, limit, order);
     console.log(catFetch, dogFetch);
     // Get images data simultaneously
